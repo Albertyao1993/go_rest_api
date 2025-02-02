@@ -36,20 +36,20 @@ func (u *User) Save() error {
 		return err
 	}
 
-	u.ID, err = result.LastInsertId()
+	userId, err := result.LastInsertId()
 
-	// u.ID = userId
+	u.ID = userId
 
 	return err
 }
 
 func (u *User) ValidateCredentials() error {
-	query := `SELECT password FROM users WHERE email = ?`
+	query := `SELECT id, password FROM users WHERE email = ?`
 
 	row := db.DB.QueryRow(query, u.Email)
 
 	var retrievedPassword string
-	err := row.Scan(&retrievedPassword)
+	err := row.Scan(&u.ID, &retrievedPassword)
 	if err != nil {
 		return err
 	}
